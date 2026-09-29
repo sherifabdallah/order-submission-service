@@ -1,0 +1,26 @@
+# SQL Server-backed deployment of the single application image.
+#   docker compose up --build        -> http://localhost:8080
+# For the zero-dependency SQLite variant, run the image on its own:
+#   docker build -t order-submission . && docker run -p 8080:8080 order-submission
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "OrderDesk!2026"
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      Database__Provider: SqlServer
+      ConnectionStrings__Orders: "Server=sqlserver;Database=OrderSubmission;User Id=sa;Password=OrderDesk!2026;TrustServerCertificate=True"
+    depends_on:
+      sqlserver:
+        condition: service_healthy

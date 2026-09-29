@@ -1,0 +1,353 @@
+/* Order Desk design tokens and base elements.
+   Palette: cool neutral surfaces, blue-black ink, one cobalt accent. Green, amber and red are
+   reserved for status and never used decoratively. */
+
+:root {
+  color-scheme: light;
+
+  --paper: #f2f4f8;
+  --sheet: #ffffff;
+  --sheet-inset: #f6f8fb;
+  --ink: #131a29;
+  --ink-2: #475267;
+  --ink-3: #667085;
+  --rule: #dfe4ec;
+  --rule-strong: #c2cad7;
+
+  --accent: #2743c9;
+  --accent-hover: #1e36a8;
+  --accent-ink: #ffffff;
+  --accent-soft: #eaeefc;
+
+  --ok: #13744a;
+  --ok-soft: #e4f4eb;
+  --wait: #945706;
+  --wait-soft: #fdf2de;
+  --bad: #b3302a;
+  --bad-soft: #fcebe8;
+
+  --font-ui: 'Schibsted Grotesk Variable', 'Helvetica Neue', Arial, sans-serif;
+  --font-data: 'Martian Mono Variable', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+
+  --radius-sm: 6px;
+  --radius: 10px;
+  --shadow: 0 1px 2px rgb(19 26 41 / 0.05), 0 2px 8px rgb(19 26 41 / 0.04);
+  --gutter: clamp(16px, 3vw, 32px);
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --paper: #0e131c;
+    --sheet: #151c28;
+    --sheet-inset: #1a2231;
+    --ink: #e8ecf4;
+    --ink-2: #aeb7c9;
+    --ink-3: #8d97ab;
+    --rule: #28324a;
+    --rule-strong: #3a4660;
+
+    --accent: #93a6ff;
+    --accent-hover: #b0bfff;
+    --accent-ink: #0e131c;
+    --accent-soft: #1f2a50;
+
+    --ok: #5ccb96;
+    --ok-soft: #12311f;
+    --wait: #e8ab55;
+    --wait-soft: #35270f;
+    --bad: #f3877a;
+    --bad-soft: #3c1815;
+
+    --shadow: none;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Identifiers and keys: the only place the monospace face is used. */
+.data {
+  font-family: var(--font-data);
+  font-size: 0.8125rem;
+  letter-spacing: -0.01em;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.hint {
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+
+.card {
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.card-title {
+  font-size: 1.0625rem;
+  font-weight: 650;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  svg {
+    flex: none;
+  }
+}
+
+.btn-sm {
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 0.875rem;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+
+  &:hover:not(:disabled) {
+    background: var(--accent-hover);
+  }
+}
+
+.btn-secondary {
+  background: var(--sheet);
+  color: var(--ink);
+  border-color: var(--rule-strong);
+
+  &:hover:not(:disabled) {
+    border-color: var(--ink-3);
+    background: var(--sheet-inset);
+  }
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--accent);
+
+  &:hover:not(:disabled) {
+    background: var(--accent-soft);
+  }
+}
+
+/* Form controls */
+label,
+.field-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.input {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-sm);
+  background: var(--sheet);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem; /* 16px keeps mobile browsers from zooming on focus */
+
+  &::placeholder {
+    color: var(--ink-3);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: var(--focus-ring);
+  }
+
+  &.invalid {
+    border-color: var(--bad);
+  }
+
+  &:disabled {
+    background: var(--sheet-inset);
+    color: var(--ink-2);
+  }
+}
+
+.field-error {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  color: var(--bad);
+  font-size: 0.8125rem;
+}
+
+/* Inline messages */
+.notice {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-size: 0.9375rem;
+
+  &.info {
+    background: var(--accent-soft);
+    border-color: color-mix(in srgb, var(--accent) 25%, transparent);
+    --tone: var(--accent);
+  }
+
+  &.ok {
+    background: var(--ok-soft);
+    border-color: color-mix(in srgb, var(--ok) 25%, transparent);
+    --tone: var(--ok);
+  }
+
+  &.warn {
+    background: var(--wait-soft);
+    border-color: color-mix(in srgb, var(--wait) 30%, transparent);
+    --tone: var(--wait);
+  }
+
+  &.bad {
+    background: var(--bad-soft);
+    border-color: color-mix(in srgb, var(--bad) 25%, transparent);
+    --tone: var(--bad);
+  }
+
+  > app-icon {
+    color: var(--tone);
+    padding-top: 2px;
+  }
+}
+
+.notice-title {
+  font-weight: 650;
+}
+
+.notice-body {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+details.tech {
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+
+  summary {
+    cursor: pointer;
+    width: fit-content;
+  }
+
+  p {
+    margin-top: 6px;
+    overflow-wrap: anywhere;
+  }
+}
+
+.spinner {
+  width: 15px;
+  height: 15px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

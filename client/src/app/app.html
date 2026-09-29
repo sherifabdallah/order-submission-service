@@ -1,0 +1,33 @@
+<header class="topbar">
+  <div class="topbar-inner">
+    <a routerLink="/" class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">Order Desk</span>
+    </a>
+
+    <div class="topbar-actions">
+      @if (degradedMode(); as mode) {
+        <button type="button" class="sim-status" [class]="'sim-status ' + mode.value.toLowerCase()" (click)="tools.open()">
+          <span class="dot" aria-hidden="true"></span> Messaging: {{ mode.label }}
+        </button>
+      }
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm"
+        (click)="tools.toggle()"
+        [attr.aria-expanded]="tools.isOpen()"
+        aria-controls="test-tools"
+      >
+        <app-icon name="tools" [size]="15" /> Test tools
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <router-outlet />
+</main>
+
+@if (tools.isOpen()) {
+  <app-test-tools-panel />
+}

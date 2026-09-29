@@ -1,0 +1,15 @@
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/.angular/
+**/*.db
+**/*.db-shm
+**/*.db-wal
+**/App_Data/
+src/OrderSubmission.Api/wwwroot/
+tests/
+.git/
+.vs/
+.vscode/
+.idea/

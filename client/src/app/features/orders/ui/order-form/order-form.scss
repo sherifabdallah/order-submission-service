@@ -1,0 +1,315 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.order-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  padding: 28px;
+}
+
+.form-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
+.form-heading {
+  display: grid;
+  gap: 4px;
+
+  h1 {
+    font-size: 1.625rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+}
+
+.field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+}
+
+.customer {
+  max-width: 440px;
+}
+
+/* Items */
+.items {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+
+  legend {
+    padding: 0;
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+}
+
+.items-head,
+.item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 8.75rem 8rem 6.5rem 2.75rem;
+  column-gap: 12px;
+}
+
+.items-head {
+  padding-bottom: 2px;
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+
+  .right {
+    text-align: right;
+  }
+}
+
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.item {
+  align-items: start;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--rule);
+
+  &:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+}
+
+.cell {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.cell-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.price .input {
+  text-align: right;
+}
+
+.amount {
+  justify-items: end;
+  align-self: start;
+  min-height: 44px;
+  align-content: center;
+}
+
+.amount-value {
+  font-weight: 600;
+}
+
+/* Quantity stepper: [-] [ 2 ] [+] */
+.stepper {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  min-height: 44px;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-sm);
+  background: var(--sheet);
+  overflow: hidden;
+
+  &:focus-within {
+    border-color: var(--accent);
+    box-shadow: var(--focus-ring);
+  }
+
+  &.invalid {
+    border-color: var(--bad);
+  }
+
+  button {
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: var(--sheet-inset);
+    color: var(--ink);
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    &:disabled {
+      color: var(--ink-3);
+      cursor: not-allowed;
+    }
+  }
+
+  input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: 1rem;
+    text-align: center;
+    -moz-appearance: textfield;
+
+    &:focus {
+      outline: none;
+    }
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+}
+
+.remove {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    color: var(--bad);
+    background: var(--bad-soft);
+  }
+
+  &:disabled {
+    visibility: hidden;
+  }
+}
+
+.add-item {
+  justify-self: start;
+  margin-left: -12px;
+}
+
+/* Footer */
+.form-foot {
+  display: grid;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+
+.total {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.total-label {
+  font-weight: 600;
+}
+
+.total-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.warn {
+  color: var(--wait);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.submit {
+  min-width: 170px;
+}
+
+@media (max-width: 720px) {
+  .order-form {
+    padding: 20px 16px;
+    gap: 20px;
+  }
+
+  .items-head {
+    display: none;
+  }
+
+  .form-head .btn-ghost {
+    margin-left: -12px;
+  }
+
+  /* Each item becomes a small card: product on top, quantity and price side by side. */
+  .item {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px;
+    grid-template-areas:
+      'product product remove'
+      'quantity price price'
+      'amount amount amount';
+    row-gap: 10px;
+    padding: 14px;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    background: var(--sheet-inset);
+
+    &:first-child {
+      border-top: 1px solid var(--rule);
+      padding-top: 14px;
+    }
+  }
+
+  .product { grid-area: product; }
+  .quantity { grid-area: quantity; }
+  .price { grid-area: price; }
+  .remove { grid-area: remove; }
+
+  .amount {
+    grid-area: amount;
+    grid-auto-flow: column;
+    justify-content: space-between;
+    min-height: 0;
+  }
+
+  .cell-label {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+
+    .btn {
+      width: 100%;
+    }
+  }
+}

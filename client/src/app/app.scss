@@ -1,0 +1,115 @@
+:host {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100dvh;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--sheet) 94%, transparent);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--rule);
+}
+
+.topbar-inner,
+.page {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 60px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* An order slip with a tear-off stub. */
+.brand-mark {
+  position: relative;
+  width: 22px;
+  height: 16px;
+  border: 1.5px solid var(--ink);
+  border-radius: 3px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    right: 5px;
+    border-left: 1.5px dashed var(--accent);
+  }
+}
+
+.brand-name {
+  font-size: 1.0625rem;
+  font-weight: 750;
+  letter-spacing: -0.015em;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sim-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  &.flaky {
+    background: var(--wait-soft);
+    color: var(--wait);
+  }
+
+  &.outage {
+    background: var(--bad-soft);
+    color: var(--bad);
+  }
+}
+
+.page {
+  padding-block: 32px 48px;
+}
+
+@media (max-width: 560px) {
+  .page {
+    padding-block: 16px 32px;
+  }
+
+  .sim-status {
+    padding: 0 10px;
+    font-size: 0.8125rem;
+  }
+}

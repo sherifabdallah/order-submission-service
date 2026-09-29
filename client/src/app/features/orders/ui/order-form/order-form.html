@@ -1,0 +1,211 @@
+<form class="card order-form" [formGroup]="form" (ngSubmit)="submit()" novalidate aria-labelledby="form-title">
+  <header class="form-head">
+    <div class="form-heading">
+      <h1 id="form-title">New order</h1>
+      <p class="hint">Add a customer and at least one item. The final total is calculated when you place the order.</p>
+    </div>
+    <button type="button" class="btn btn-ghost btn-sm" (click)="useExample()" [disabled]="locked()">Fill with an example</button>
+  </header>
+
+  @if (notice(); as notice) {
+    <div class="notice" [class]="'notice ' + notice.tone" role="alert">
+      <app-icon [name]="notice.icon" [size]="18" />
+      <div class="notice-body">
+        <p class="notice-title">{{ notice.title }}</p>
+        <p>{{ notice.text }}</p>
+        @if (notice.canRetry || notice.canDiscard) {
+          <div class="notice-actions">
+            @if (notice.canRetry) {
+              <button type="button" class="btn btn-primary btn-sm" (click)="retry()" [disabled]="store.sending()">
+                <app-icon name="retry" [size]="14" /> Try again
+              </button>
+            }
+            @if (notice.canDiscard) {
+              <button type="button" class="btn btn-secondary btn-sm" (click)="discard()">Discard it</button>
+            }
+          </div>
+        }
+        @if (notice.key) {
+          <details class="tech">
+            <summary>Technical details</summary>
+            <p>
+              Trying again re-sends the same Idempotency-Key <span class="data">{{ notice.key }}</span>, so the server returns the
+              existing order instead of creating a new one.
+            </p>
+          </details>
+        }
+      </div>
+    </div>
+  }
+
+  <div class="field customer">
+    <label for="customerReference">Customer reference</label>
+    <input
+      id="customerReference"
+      class="input"
+      formControlName="customerReference"
+      placeholder="For example ACME-4471"
+      autocomplete="off"
+      spellcheck="false"
+      [class.invalid]="error(form.controls.customerReference)"
+      [attr.aria-invalid]="!!error(form.controls.customerReference)"
+      aria-describedby="customerReference-help"
+    />
+    @if (error(form.controls.customerReference); as message) {
+      <p class="field-error" id="customerReference-help">{{ message }}</p>
+    } @else {
+      <p class="hint" id="customerReference-help">The customer's account number or ID. The confirmation is sent to this customer.</p>
+    }
+  </div>
+
+  <fieldset class="items">
+    <legend>Items</legend>
+
+    <div class="items-head" aria-hidden="true">
+      <span>Product</span>
+      <span>Quantity</span>
+      <span>Unit price</span>
+      <span class="right">Amount</span>
+      <span></span>
+    </div>
+
+    <ol formArrayName="items">
+      @for (item of items.controls; track item; let i = $index) {
+        <li class="item" [formGroupName]="i">
+          <div class="cell product">
+            <label class="cell-label" [for]="'code-' + i">Product</label>
+            <input
+              [id]="'code-' + i"
+              class="input"
+              formControlName="productCode"
+              list="product-catalog"
+              placeholder="Choose or type a code"
+              autocomplete="off"
+              spellcheck="false"
+              (input)="applyCatalogPrice(i)"
+              [class.invalid]="error(item.controls.productCode)"
+              [attr.aria-invalid]="!!error(item.controls.productCode)"
+            />
+            @if (error(item.controls.productCode); as message) {
+              <p class="field-error">{{ message }}</p>
+            } @else if (productName(i); as name) {
+              <p class="hint">{{ name }}</p>
+            }
+          </div>
+
+          <div class="cell quantity">
+            <label class="cell-label" [for]="'qty-' + i">Quantity</label>
+            <div class="stepper" [class.invalid]="error(item.controls.quantity)">
+              <button
+                type="button"
+                (click)="step(i, -1)"
+                [disabled]="locked() || (item.controls.quantity.value ?? 0) <= 1"
+                [attr.aria-label]="'Decrease quantity of item ' + (i + 1)"
+              >
+                <app-icon name="minus" [size]="14" />
+              </button>
+              <input
+                [id]="'qty-' + i"
+                class="num"
+                type="number"
+                inputmode="numeric"
+                min="1"
+                [max]="rules.maxQuantity"
+                step="1"
+                formControlName="quantity"
+                [attr.aria-invalid]="!!error(item.controls.quantity)"
+              />
+              <button
+                type="button"
+                (click)="step(i, 1)"
+                [disabled]="locked() || (item.controls.quantity.value ?? 0) >= rules.maxQuantity"
+                [attr.aria-label]="'Increase quantity of item ' + (i + 1)"
+              >
+                <app-icon name="plus" [size]="14" />
+              </button>
+            </div>
+            @if (error(item.controls.quantity); as message) {
+              <p class="field-error">{{ message }}</p>
+            }
+          </div>
+
+          <div class="cell price">
+            <label class="cell-label" [for]="'price-' + i">Unit price</label>
+            <input
+              [id]="'price-' + i"
+              class="input num"
+              inputmode="decimal"
+              placeholder="0.00"
+              autocomplete="off"
+              formControlName="unitPrice"
+              (blur)="formatPrice(i)"
+              [class.invalid]="error(item.controls.unitPrice)"
+              [attr.aria-invalid]="!!error(item.controls.unitPrice)"
+            />
+            @if (error(item.controls.unitPrice); as message) {
+              <p class="field-error">{{ message }}</p>
+            }
+          </div>
+
+          <div class="cell amount">
+            <span class="cell-label">Amount</span>
+            <span class="amount-value num">{{ amount(i) | money }}</span>
+          </div>
+
+          <button
+            type="button"
+            class="remove"
+            (click)="removeItem(i)"
+            [disabled]="items.length === 1 || locked()"
+            [attr.aria-label]="'Remove item ' + (i + 1)"
+            title="Remove item"
+          >
+            <app-icon name="trash" />
+          </button>
+        </li>
+      }
+    </ol>
+
+    <button type="button" class="btn btn-ghost btn-sm add-item" (click)="addItem()" [disabled]="locked() || items.length >= rules.maxLines">
+      <app-icon name="plus" [size]="14" /> Add another item
+    </button>
+  </fieldset>
+
+  <datalist id="product-catalog">
+    @for (product of products; track product.code) {
+      <option [value]="product.code">{{ product.name }} ({{ product.price | money }})</option>
+    }
+  </datalist>
+
+  <footer class="form-foot">
+    <div class="total">
+      <div>
+        <p class="total-label">Estimated total</p>
+        <p class="hint">{{ lineCount() }} {{ lineCount() === 1 ? 'item' : 'items' }} · confirmed when the order is placed</p>
+      </div>
+      <p class="total-value num">{{ estimate() | money }}</p>
+    </div>
+
+    @if (keyPlan().mode === 'changed' && !store.sending()) {
+      <p class="hint warn" role="status">
+        You changed the order after an unconfirmed attempt, so placing it now counts as a new order.
+      </p>
+    }
+    @if (store.sending() && store.attempt() > 1) {
+      <p class="hint" role="status">Connection problem. Trying again ({{ store.attempt() }} of {{ maxAttempts }})…</p>
+    }
+
+    <div class="actions">
+      <button type="button" class="btn btn-secondary" (click)="clear()" [disabled]="locked()">Clear</button>
+      <button type="submit" class="btn btn-primary submit" [disabled]="store.sending()">
+        @if (store.sending()) {
+          <span class="spinner" aria-hidden="true"></span> Placing order…
+        } @else if (keyPlan().mode === 'reuse') {
+          <app-icon name="retry" /> Try again
+        } @else {
+          Place order
+        }
+      </button>
+    </div>
+  </footer>
+</form>
